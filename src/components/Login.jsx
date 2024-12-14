@@ -26,7 +26,7 @@ const LoginPage = ({ onLogin }) => {
             }}
           ></div>
           <div className="w-full md:w-1/2 p-8">
-            <h2 className="text-2xl font-bold mb-2">Welcome back!</h2>
+            <h2 className="text-2xl font-bold mb-2">Welcome back! GO BY RAIL</h2>
             <p className="text-gray-500 mb-6">Login to access all your data</p>
             <form onSubmit={handleLoginClick}>
               <div className="mb-4">
