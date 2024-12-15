@@ -1,21 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // For navigation
 import { Doughnut } from "react-chartjs-2"; // For charts
 import GoogleMapReact from "google-map-react"; // For the map
 import "tailwindcss/tailwind.css";
 import { Link } from "react-router-dom";
+import Header from "./Header";
 
 
 // Dummy data
 const dummyData = [
   {
-    train: "Express A1",
+    train: "Udarata Menike",
     time: "09:00 AM",
     crowdLevels: { firstClass: 20, secondClass: 50, thirdClass: 80 },
     coordinates: { lat: 6.9271, lng: 79.8612 },
   },
   {
-    train: "Local B2",
+    train: "Ruhunu Kumari",
     time: "09:30 AM",
     crowdLevels: { firstClass: 10, secondClass: 40, thirdClass: 60 },
     coordinates: { lat: 6.9364, lng: 79.8449 },
@@ -69,24 +70,62 @@ const Predictions = () => {
     ],
   });
 
+  const [showHeader, setShowHeader] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  
+  useEffect(() => {
+    // Check session storage for header visibility
+    const headerVisibility = sessionStorage.getItem('headerVisible');
+    if (headerVisibility !== null) {
+      setShowHeader(JSON.parse(headerVisibility)); // Use saved state from sessionStorage
+    }
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Hide header when scrolling down
+      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        setShowHeader(false);
+        sessionStorage.setItem('headerVisible', false); // Save state to sessionStorage
+      } 
+      // Show header when scrolling up
+      else if (currentScrollY < lastScrollY) {
+        setShowHeader(true);
+        sessionStorage.setItem('headerVisible', true); // Save state to sessionStorage
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [lastScrollY]);
   
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      {/* Header */}
-      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-800">
-            Train Crowd Predictions
-          </h1>
-          <button
-            className="bg-gray-800 text-white px-4 py-2 rounded-lg"
-            onClick={() => navigate('/Home')}
-          >
-            Back
-          </button>
-        </div>
+    {/* Fixed Header */}
+    <div className={`fixed top-0 left-0 w-full bg-white shadow-lg transition-all ${showHeader ? 'block' : 'hidden'}`}>
+      <Header />
+    </div>
+
+    <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-16">
+      <div className="flex justify-between items-center">
+        <button
+          className="bg-gray-800 text-white px-4 py-2 rounded-lg"
+          onClick={() => navigate('/Home')}
+        >
+          Back
+        </button>
+        <h1 className="text-2xl font-bold text-gray-800">
+          Train Crowd Predictions
+        </h1>
       </div>
+      </div>
+    
+ 
 
       {/* Real-time Train List */}
       <div className="max-w-6xl mx-auto mt-6 bg-white shadow-lg rounded-lg p-6">

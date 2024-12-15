@@ -3,10 +3,11 @@ import GoogleMapReact from "google-map-react";
 import { useNavigate } from "react-router-dom";
 import { Doughnut } from "react-chartjs-2"; // For displaying the crowd level chart
 import "tailwindcss/tailwind.css";
+import Header from "./Header";
 
 // Dummy data for live tracking
 const dummyTrainData = {
-  trainName: "Express A1",
+  trainName: "Ruhunu Kumari",
   speed: "80 km/h",
   eta: "09:45 AM",
   coordinates: { lat: 6.9271, lng: 79.8612 },
@@ -65,20 +66,42 @@ const LiveTracking = () => {
     ],
   });
 
+  const [showHeader, setShowHeader] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowHeader(window.scrollY <= 50); // Show header when near the top
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      {/* Header */}
-      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-800">Live Train Tracking</h1>
-          <button
-            className="bg-gray-800 text-white px-4 py-2 rounded-lg"
-            onClick={() => navigate("/Predictions")}
-          >
-            Back to Predictions
-          </button>
-        </div>
-      </div>
+  {/* Header */}
+  {showHeader && (
+    <div className="fixed top-0 left-0 w-full bg-white shadow-lg transition-all">
+      <Header />
+    </div>
+  )}
+
+  {/* Main Content */}
+  <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6 pt-20">
+    <div className="flex justify-between items-center">
+      <h1 className="text-2xl font-bold text-gray-800">Live Train Tracking</h1>
+      <button
+        className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition"
+        onClick={() => navigate("/Predictions")}
+      >
+        Back to Predictions
+      </button>
+    </div>
+  </div>
+
 
       {/* Train Details */}
       <div className="max-w-6xl mx-auto mt-6 bg-white shadow-lg rounded-lg p-6">

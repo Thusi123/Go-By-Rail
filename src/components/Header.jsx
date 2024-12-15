@@ -71,9 +71,9 @@ const Header = () => {
         <Link to="/home" className="text-gray-700 hover:text-blue-500">
           Home
         </Link>
-        <Link to="/dashboard" className="text-gray-700 hover:text-blue-500">
+       {/* <Link to="/dashboard" className="text-gray-700 hover:text-blue-500">
           Dashboard
-        </Link>
+        </Link>*/}
         <Link to="/Tickets" className="text-gray-700 hover:text-blue-500">
           Tickets
         </Link>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import LoginPage from "./components/Login";
 import SignupPage from "./components/Signup";
@@ -14,18 +14,22 @@ import LiveTracking from "./components/LiveTracking";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
-  const [userType, setUserType] = useState(null); // 'admin' or 'user'
+  const [userType, setUserType] = useState(null);
 
-  const handleLogin = (email, password) => {
-    if (email === "admin@gmail.com" && password === "admin") {
-      setUserType("admin");
+  useEffect(() => {
+    const savedLoggedIn = localStorage.getItem("loggedIn") === "true";
+    const savedUserType = localStorage.getItem("userType");
+    if (savedLoggedIn) {
       setLoggedIn(true);
-    } else if (email === "user@gmail.com" && password === "user") {
-      setUserType("user");
-      setLoggedIn(true);
-    } else {
-      alert("Invalid credentials");
+      setUserType(savedUserType);
     }
+  }, []);
+
+  const handleLogout = () => {
+    setLoggedIn(false);
+    setUserType(null);
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("userType");
   };
 
   return (
@@ -34,7 +38,13 @@ function App() {
         {/* Public Routes */}
         {!loggedIn && (
           <>
-            <Route path="/" element={<LoginPage onLogin={handleLogin} />} />
+            <Route
+              path="/"
+              element={<LoginPage onLoginSuccess={(type) => {
+                setLoggedIn(true);
+                setUserType(type);
+              }} />}
+            />
             <Route path="/signup" element={<SignupPage />} />
           </>
         )}
@@ -43,9 +53,8 @@ function App() {
         {loggedIn && userType === "admin" && (
           <>
             <Route path="/" element={<Navigate to="/admin" replace />} />
-            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin" element={<Admin onLogout={handleLogout} />} />
             <Route path="/AdminDashboard" element={<AdminDashboard />} />
-            <Route path="/login" element={<LoginPage />} />
           </>
         )}
 
@@ -53,12 +62,9 @@ function App() {
         {loggedIn && userType === "user" && (
           <>
             <Route path="/" element={<Navigate to="/home" replace />} />
-            <Route path="/home" element={<HomePage />} />
-          
+            <Route path="/home" element={<HomePage onLogout={handleLogout} />} />
             <Route path="/Tickets" element={<Tickets />} />
             <Route path="/Predictions" element={<Predictions />} />
-            
-            <Route path="/login" element={<LoginPage />} />
             <Route path="/Tickets1" element={<Tickets1 />} />
             <Route path="/live-tracking" element={<LiveTracking />} />
           </>
