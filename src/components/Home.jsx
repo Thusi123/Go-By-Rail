@@ -22,7 +22,7 @@ const Home = () => {
           />
           <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center text-white">
             <div className="text-center">
-              <h1 className="text-4xl font-bold mb-2">Welcome back, Emma</h1>
+              <h1 className="text-4xl font-bold mb-2">Welcome back</h1>
               <p className="text-lg">Where to next?</p>
             </div>
           </div>

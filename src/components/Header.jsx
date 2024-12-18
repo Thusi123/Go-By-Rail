@@ -42,7 +42,7 @@ const Header = () => {
       {/* Logo Section */}
       <div className="flex items-center">
         <img src={logImage} alt="Logo" className="h-12" />
-        <span className="ml-3 text-2xl font-bold text-blue-800">GO BY RAIL</span>
+        <span className="ml-3 text-2xl font-bold text-blue-800">GoByRail</span>
       </div>
 
       {/* Search Bar */}
