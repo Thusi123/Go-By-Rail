@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // For navigation
 import { Doughnut } from "react-chartjs-2"; // For charts
-import GoogleMapReact from "google-map-react"; // For the map
+//import GoogleMapReact from "google-map-react"; // For the map
 import "tailwindcss/tailwind.css";
 import { Link } from "react-router-dom";
 import Header from "./Header";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 
 
 // Dummy data
@@ -157,7 +159,7 @@ const Predictions = () => {
         ))}
       </div>
 
-      {/* Map */}
+      {/* Map 
       <div className="max-w-6xl mx-auto mt-6 bg-white shadow-lg rounded-lg p-6">
         <h2 className="text-lg font-semibold mb-4">Train Map</h2>
         <div className="h-64">
@@ -175,6 +177,28 @@ const Predictions = () => {
               />
             ))}
           </GoogleMapReact>
+        </div>
+      </div>*/}
+
+      {/* Map */}
+      <div className="max-w-6xl mx-auto mt-6 bg-white shadow-lg rounded-lg p-6">
+        <h2 className="text-lg font-semibold mb-4">Train Map</h2>
+        <div className="h-64 relative z-0">
+          <MapContainer
+            center={[6.9271, 79.8612]}
+            zoom={10}
+            className="h-full w-full"
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+            {dummyData.map((train, index) => (
+              <Marker key={index} position={[train.coordinates.lat, train.coordinates.lng]}>
+                <Popup>{train.train}</Popup>
+              </Marker>
+            ))}
+          </MapContainer>
         </div>
       </div>
 

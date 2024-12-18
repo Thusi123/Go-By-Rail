@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import logImage from "../assets/Logo.png";// Adjust if Header.jsx is deeper in the folder structure
-
+import logImage from "../assets/Logo.png"; // Adjust if Header.jsx is deeper in the folder structure
 import { Link, useNavigate } from "react-router-dom"; // For navigation
 
 const Header = () => {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false); // State for toggling dropdown
   const [isModalOpen, setIsModalOpen] = useState(false); // State for toggling modal
+  const [query, setQuery] = useState(''); // State for search input
   const navigate = useNavigate(); // Use navigate for programmatic navigation
 
   const handleLogout = () => {
@@ -23,32 +23,38 @@ const Header = () => {
     setIsModalOpen(false); // Close the modal without signing out
   };
 
+  const handleSearch = () => {
+    const lowerCaseQuery = query.toLowerCase();
+
+    if (lowerCaseQuery.includes('ticket')) {
+      navigate('/tickets'); // Navigate to the /tickets route
+    } else if (lowerCaseQuery.includes('prediction')) {
+      navigate('/predictions'); // Navigate to the /predictions route
+    } else if (lowerCaseQuery.includes('tracking')) {
+      navigate('/tracking'); // Navigate to the /tracking route
+    } else {
+      alert('Please enter a valid search term.');
+    }
+  };
+
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-white shadow-md">
       {/* Logo Section */}
       <div className="flex items-center">
         <img src={logImage} alt="Logo" className="h-12" />
         <span className="ml-3 text-2xl font-bold text-blue-800">GO BY RAIL</span>
-      </div> 
-
-       {/* Logo 
-              <div className="flex flex-col items-center mb-8">
-                <div className=" flex items-center justify-center">
-                  <img src={logImage} alt="Logo" className="h-12 w-12" />
-                </div>
-                <p className="mt-4 text-lg font-semibold">GoByRail </p>
-              </div> */}
-
-
+      </div>
 
       {/* Search Bar */}
       <div className="flex items-center bg-gray-100 rounded-full px-4 py-2 mx-4 w-full max-w-md">
         <input
           type="text"
-          placeholder="Search"
+          placeholder="Search tickets, predictions, tracking"
           className="bg-gray-100 outline-none flex-grow text-sm px-2"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
         />
-        <button className="text-blue-500">
+        <button onClick={handleSearch} className="text-blue-500">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
@@ -71,9 +77,6 @@ const Header = () => {
         <Link to="/home" className="text-gray-700 hover:text-blue-500">
           Home
         </Link>
-       {/* <Link to="/dashboard" className="text-gray-700 hover:text-blue-500">
-          Dashboard
-        </Link>*/}
         <Link to="/Tickets" className="text-gray-700 hover:text-blue-500">
           Tickets
         </Link>
@@ -156,7 +159,6 @@ const Header = () => {
           </div>
         </div>
       )}
-
     </header>
   );
 };
