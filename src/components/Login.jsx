@@ -1,13 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logImage from "../assets/Logo.png";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const LoginPage = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isVisible, setIsVisible] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+ 
 
   const handleLogin = (event) => {
     event.preventDefault();
@@ -35,14 +39,16 @@ const LoginPage = ({ onLoginSuccess }) => {
     }
   };
 
+
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-12">
       {/* Success Message Box */}
-{showSuccessMessage && (
-  <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-700 text-white px-6 py-3 rounded-md shadow-lg z-50 animate-fade-in-out">
-    <p className="font-semibold text-lg"> Login Successful! Redirecting...</p>
-  </div>
-)}
+      {showSuccessMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-700 text-white px-6 py-3 rounded-md shadow-lg z-50 animate-fade-in-out">
+          <p className="font-semibold text-lg"> Login Successful! Redirecting...</p>
+        </div>
+      )}
 
 
       {/* Error Message */}
@@ -83,19 +89,35 @@ const LoginPage = ({ onLoginSuccess }) => {
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
+
+
               <div className="mb-6">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
                   Password
                 </label>
-                <input
-                  id="password"
-                  type="password"
-                  placeholder="Enter your password"
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:border-blue-500"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <div className="relative">
+                  <input
+                    id="password"
+                    type={isVisible ? "text" : "password"}
+                    placeholder="Enter your password"
+                    className="w-full p-3 border rounded-lg focus:outline-none focus:border-blue-500"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setIsVisible(!isVisible)}
+                    className="absolute top-1/2 transform -translate-y-1/2 right-3 text-gray-500 focus:outline-none"
+                  >
+                    {isVisible ? <FaEyeSlash /> : <FaEye /> }
+                  </button>
+                </div>
               </div>
+
+
+
+
+
               <button
                 type="submit"
                 className="w-full bg-orange-500 text-white p-3 rounded-lg font-semibold hover:bg-orange-600 transition duration-300"

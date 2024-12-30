@@ -63,62 +63,51 @@ const Tickets = () => {
       </div>
 
       {/* Search Form */}
-<div className="p-6">
-  <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-7xl mx-auto flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 items-center">
-    <select
-      className="flex-1 px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-      value={startStation}
-      onChange={(e) => setStartStation(e.target.value)}
-    >
-      <option value="">Start Station</option>
-      <option value="Kandy">Kandy</option>
-      <option value="Colombo">Colombo</option>
-      <option value="Ambalangoda">Ambalangoda</option>
-      <option value="Anuradhapura">Anuradhapura</option>
-      <option value="Avissawella">Avissawella</option>
-      <option value="Badulla">Badulla</option>
-      <option value="Batticaloa">Batticaloa</option>
-      <option value="Beliatta">Beliatta</option>
-      <option value="Ella">Ella</option>
-      <option value="Galle">Galle</option>
-      <option value="Hatton">Hatton</option>
-      <option value="Jaffna">Jaffna</option>
-      <option value="Kankesanthurai">Kankesanthurai</option>
-      <option value="Mahawa">Mahawa</option>
-      <option value="Maradana">Maradana</option>
-      <option value="Matara">Matara</option>
-      <option value="Negombo">Negombo</option>
-      <option value="Puttalama">Puttalama</option>
-      <option value="Trincomalee">Trincomalee</option>
+      <div className="p-6">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-7xl mx-auto flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 items-center">
+        {/* Start Station Dropdown */}
+        <select
+          className="flex-1 px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+          value={startStation}
+          onChange={(e) => setStartStation(e.target.value)}
+        >
+          <option value="">Start Station</option>
+          <option value="Kandy">Kandy</option>
+          <option value="Colombo">Colombo</option>
+          <option value="Ambalangoda">Ambalangoda</option>
+          <option value="Anuradhapura">Anuradhapura</option>
+          <option value="Avissawella">Avissawella</option>
+          <option value="Badulla">Badulla</option>
+          <option value="Batticaloa">Batticaloa</option>
+          <option value="Beliatta">Beliatta</option>
+          <option value="Ella">Ella</option>
+          <option value="Galle">Galle</option>
+          <option value="Hatton">Hatton</option>
+          <option value="Jaffna">Jaffna</option>
+          
+        </select>
 
-    </select>
-    <select
-      className="flex-1 px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-      value={endStation}
-      onChange={(e) => setEndStation(e.target.value)}
-    >
-      <option value="">End Station</option>
-      <option value="Colombo">Colombo</option>
-      <option value="Kandy">Kandy</option>
-      <option value="Ambalangoda">Ambalangoda</option>
-      <option value="Anuradhapura">Anuradhapura</option>
-      <option value="Avissawella">Avissawella</option>
-      <option value="Badulla">Badulla</option>
-      <option value="Batticaloa">Batticaloa</option>
-      <option value="Beliatta">Beliatta</option>
-      <option value="Ella">Ella</option>
-      <option value="Galle">Galle</option>
-      <option value="Hatton">Hatton</option>
-      <option value="Jaffna">Jaffna</option>
-      <option value="Kankesanthurai">Kankesanthurai</option>
-      <option value="Mahawa">Mahawa</option>
-      <option value="Maradana">Maradana</option>
-      <option value="Matara">Matara</option>
-      <option value="Negombo">Negombo</option>
-      <option value="Puttalama">Puttalama</option>
-      <option value="Trincomalee">Trincomalee</option>
-      
-    </select>
+        {/* End Station Dropdown */}
+        <select
+          className="flex-1 px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+          value={endStation}
+          onChange={(e) => setEndStation(e.target.value)}
+        >
+          <option value="">End Station</option>
+          <option value="Colombo">Colombo</option>
+          <option value="Kandy">Kandy</option>
+          <option value="Ambalangoda">Ambalangoda</option>
+          <option value="Anuradhapura">Anuradhapura</option>
+          <option value="Avissawella">Avissawella</option>
+          <option value="Badulla">Badulla</option>
+          <option value="Batticaloa">Batticaloa</option>
+          <option value="Beliatta">Beliatta</option>
+          <option value="Ella">Ella</option>
+          <option value="Galle">Galle</option>
+          <option value="Hatton">Hatton</option>
+          <option value="Jaffna">Jaffna</option>
+          
+        </select>
     <input
       type="date"
       value={date}
