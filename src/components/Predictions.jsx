@@ -1,224 +1,218 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // For navigation
-import { Doughnut } from "react-chartjs-2"; // For charts
-//import GoogleMapReact from "google-map-react"; // For the map
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { Modal, Box, Card, CardContent, Button, Typography } from "@mui/material";
+import { Doughnut } from "react-chartjs-2";
+import "leaflet/dist/leaflet.css";
 import "tailwindcss/tailwind.css";
-import { Link } from "react-router-dom";
-import Header from "./Header";
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
+ChartJS.register(ArcElement, Tooltip, Legend);
 
-// Dummy data
-const dummyData = [
+// Train details for crowd and location data
+const trainData = [
   {
     train: "Udarata Menike",
     time: "09:00 AM",
     crowdLevels: { firstClass: 20, secondClass: 50, thirdClass: 80 },
+    totalSeats: { firstClass: 44, secondClass: 198, thirdClass: 500 },
     coordinates: { lat: 6.9271, lng: 79.8612 },
   },
   {
     train: "Ruhunu Kumari",
     time: "09:30 AM",
     crowdLevels: { firstClass: 10, secondClass: 40, thirdClass: 60 },
+    totalSeats: { firstClass: 44, secondClass: 198, thirdClass: 500 },
     coordinates: { lat: 6.9364, lng: 79.8449 },
   },
   {
     train: "Express C3",
     time: "10:00 AM",
     crowdLevels: { firstClass: 5, secondClass: 20, thirdClass: 30 },
+    totalSeats: { firstClass: 44, secondClass: 198, thirdClass: 500 },
     coordinates: { lat: 6.9225, lng: 79.8671 },
   },
 ];
 
-// Map marker component
-const TrainMarker = ({ trainName }) => (
-  <div className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs shadow-lg">
-    {trainName}
-  </div>
-);
+// Modal styling for better visual presentation
+const modalStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 1200,  // Increased width
+  maxWidth: "90%",  // Reduced max-width to make it slightly smaller on large screens
+  maxHeight: "90vh",  // Adjusted height for a more balanced appearance
+  bgcolor: "background.paper",
+  boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.2)",  // Softer, more elegant shadow
+  p: 6,  // Increased padding for better spacing inside
+  borderRadius: "15px",  // Slightly reduced border radius for a more modern look
+  overflow: "auto",  // Ensures content is scrollable if too large
+  zIndex: 1300,  // Ensures modal is always on top
+};
 
-const Predictions = () => {
-  const navigate = useNavigate();
-  const [selectedTrain, setSelectedTrain] = useState(null); // Track selected train for chart modal
-  const [isModalOpen, setIsModalOpen] = useState(false); // Track modal visibility
 
-  const handleLiveTracking = () => {
-    console.log("Live tracking button clicked");
-  };
+// Reusable component for crowd levels using Doughnut chart
+const DoughnutChart = ({ label, data, totalSeats, color }) => {
+  const percentage = Math.round((data / totalSeats) * 100);
+  const availableSeats = totalSeats - data;
 
-  const openModal = (train) => {
-    setSelectedTrain(train);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedTrain(null);
-  };
-
-  const getChartData = (crowdLevels) => ({
-    labels: ["1st Class", "2nd Class", "3rd Class"],
+  const chartData = {
+    labels: ["Booked", "Available"],
     datasets: [
       {
-        data: [
-          crowdLevels.firstClass,
-          crowdLevels.secondClass,
-          crowdLevels.thirdClass,
-        ],
-        backgroundColor: ["#4caf50", "#ffeb3b", "#f44336"],
-        hoverBackgroundColor: ["#388e3c", "#fbc02d", "#d32f2f"],
+        data: [data, availableSeats],
+        backgroundColor: [color, "#f0f0f0"],
       },
     ],
-  });
+  };
 
-  const [showHeader, setShowHeader] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
-  
-  useEffect(() => {
-    // Check session storage for header visibility
-    const headerVisibility = sessionStorage.getItem('headerVisible');
-    if (headerVisibility !== null) {
-      setShowHeader(JSON.parse(headerVisibility)); // Use saved state from sessionStorage
-    }
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      // Hide header when scrolling down
-      if (currentScrollY > lastScrollY && currentScrollY > 50) {
-        setShowHeader(false);
-        sessionStorage.setItem('headerVisible', false); // Save state to sessionStorage
-      } 
-      // Show header when scrolling up
-      else if (currentScrollY < lastScrollY) {
-        setShowHeader(true);
-        sessionStorage.setItem('headerVisible', true); // Save state to sessionStorage
-      }
-
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [lastScrollY]);
-  
+  const options = {
+    plugins: {
+      legend: { display: false },
+    },
+    cutout: "75%",
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-    {/* Fixed Header */}
-    <div className={`fixed top-0 left-0 w-full bg-white shadow-lg transition-all ${showHeader ? 'block' : 'hidden'}`}>
-      <Header />
-    </div>
-
-    <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-16">
-      <div className="flex justify-between items-center">
-        <button
-          className="bg-gray-800 text-white px-4 py-2 rounded-lg"
-          onClick={() => navigate('/Home')}
+    <div style={{ margin: "20px", maxWidth: "100px" }}>
+      <div style={{ position: "relative" }}>
+        <Doughnut data={chartData} options={options} />
+        <Typography
+          variant="h6"
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            fontWeight: "bold",
+          }}
         >
-          Back
-        </button>
-        <h1 className="text-2xl font-bold text-gray-800">
-          Train Crowd Predictions
-        </h1>
+          {percentage}%
+        </Typography>
       </div>
-      </div>
-    
- 
+      <Typography variant="h6" textAlign="center" style={{ marginTop: "15px" }}>
+        {label}
+      </Typography>
+      <ul style={{ textAlign: "left", padding: "0 20px", marginTop: "10px" }}>
+        <li><b>Booked:</b> {data} seats</li>
+        <li><b>Available:</b> {availableSeats} seats</li>
+      </ul>
+    </div>
+  );
+};
 
-      {/* Real-time Train List */}
-      <div className="max-w-6xl mx-auto mt-6 bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-lg font-semibold mb-4">Real-Time Running Trains</h2>
-        {dummyData.map((train, index) => (
-          <div
+// Main component to display predictions
+const Predictions = () => {
+  const navigate = useNavigate();
+  const [selectedTrain, setSelectedTrain] = useState(null);
+
+  const handleModalOpen = (train) => setSelectedTrain(train);
+  const handleModalClose = () => setSelectedTrain(null);
+
+  return (
+    <div className="min-h-screen bg-gray-100 py-6">
+      <Box sx={{ maxWidth: 1000, margin: "auto", padding: 2 }}>
+        <Typography variant="h4" textAlign="center" gutterBottom>
+          Real-Time Train Predictions
+        </Typography>
+
+        {trainData.map((train, index) => (
+          <Card
             key={index}
-            className="flex justify-between items-center bg-gray-50 p-4 mb-2 rounded-lg shadow-sm"
+            sx={{ marginBottom: 2, boxShadow: 3, borderRadius: "10px" }}
           >
-            <div>
-              <h3 className="font-bold">{train.train}</h3>
-              <p className="text-gray-600">Time: {train.time}</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <button
-                className="bg-gray-500 text-white px-4 py-2 rounded-lg"
-                onClick={() => openModal(train)}
-              >
-                Crowd Levels
-              </button>
-              <Link to="/live-tracking">
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg">
-                Live Tracking
-              </button>
-              </Link>
-            
-            </div>
-          </div>
+            <CardContent>
+              <Box display="flex" justifyContent="space-between" alignItems="center">
+                <div>
+                  <Typography variant="h6">{train.train}</Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Departure: {train.time}
+                  </Typography>
+                </div>
+                <Box display="flex" gap={2}>
+                  <Button variant="contained" onClick={() => handleModalOpen(train)}>
+                    View Crowd
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => navigate("/live-tracking")}
+                  >
+                    Live Tracking
+                  </Button>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
         ))}
-      </div>
 
-      {/* Map 
-      <div className="max-w-6xl mx-auto mt-6 bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-lg font-semibold mb-4">Train Map</h2>
-        <div className="h-64">
-          <GoogleMapReact
-            bootstrapURLKeys={{ key: "YOUR_GOOGLE_MAPS_API_KEY" }}
-            defaultCenter={{ lat: 6.9271, lng: 79.8612 }}
-            defaultZoom={10}
-          >
-            {dummyData.map((train, index) => (
-              <TrainMarker
-                key={index}
-                lat={train.coordinates.lat}
-                lng={train.coordinates.lng}
-                trainName={train.train}
-              />
-            ))}
-          </GoogleMapReact>
-        </div>
-      </div>*/}
-
-      {/* Map */}
-      <div className="max-w-6xl mx-auto mt-6 bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-lg font-semibold mb-4">Train Map</h2>
-        <div className="h-64 relative z-0">
-          <MapContainer
-            center={[6.9271, 79.8612]}
-            zoom={10}
-            className="h-full w-full"
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-            {dummyData.map((train, index) => (
-              <Marker key={index} position={[train.coordinates.lat, train.coordinates.lng]}>
-                <Popup>{train.train}</Popup>
-              </Marker>
-            ))}
-          </MapContainer>
-        </div>
-      </div>
-
-      {/* Modal for Donut Chart */}
-      {isModalOpen && selectedTrain && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-96">
-            <h3 className="text-xl font-bold mb-4">
-              {selectedTrain.train} Crowd Levels
-            </h3>
-            <Doughnut data={getChartData(selectedTrain.crowdLevels)} />
-            <button
-              className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg"
-              onClick={closeModal}
+        <Box sx={{ marginTop: 4 }}>
+          <Typography variant="h5" gutterBottom>
+            Train Map
+          </Typography>
+          <div className="h-64">
+            <MapContainer
+              center={[6.9271, 79.8612]}
+              zoom={10}
+              className="h-full w-full rounded-lg"
             >
-              Close
-            </button>
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution="&copy; OpenStreetMap contributors"
+              />
+              {trainData.map((train, index) => (
+                <Marker
+                  key={index}
+                  position={[train.coordinates.lat, train.coordinates.lng]}
+                >
+                  <Popup>{train.train}</Popup>
+                </Marker>
+              ))}
+            </MapContainer>
           </div>
-        </div>
-      )}
+        </Box>
+      </Box>
+
+      {selectedTrain && (
+  <Modal open={Boolean(selectedTrain)} onClose={handleModalClose}>
+    <Box sx={modalStyle}>
+      <Typography variant="h6" gutterBottom>
+        {selectedTrain.train} Crowd Levels
+      </Typography>
+      <Box display="flex" justifyContent="center" gap={3} flexWrap="wrap">
+        <DoughnutChart
+          label="First Class"
+          data={selectedTrain.crowdLevels.firstClass}
+          totalSeats={selectedTrain.totalSeats.firstClass}
+          color="green"
+        />
+        <DoughnutChart
+          label="Second Class"
+          data={selectedTrain.crowdLevels.secondClass}
+          totalSeats={selectedTrain.totalSeats.secondClass}
+          color="yellow"
+        />
+        <DoughnutChart
+          label="Third Class"
+          data={selectedTrain.crowdLevels.thirdClass}
+          totalSeats={selectedTrain.totalSeats.thirdClass}
+          color="red"
+        />
+      </Box>
+      <Button
+        variant="contained"
+        color="error"
+        fullWidth
+        sx={{ marginTop: 2 }}
+        onClick={handleModalClose}
+      >
+        Close
+      </Button>
+    </Box>
+  </Modal>
+)}
+
     </div>
   );
 };
