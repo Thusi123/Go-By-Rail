@@ -4,6 +4,7 @@ const BookingPage = () => {
   const [selectedClass, setSelectedClass] = useState(null);
   const [numberOfTravellers, setNumberOfTravellers] = useState(0);
   const [travellers, setTravellers] = useState([]);
+  const [showTicket, setShowTicket] = useState(false);
 
   const handleClassSelection = (className) => {
     setSelectedClass(className);
@@ -11,14 +12,12 @@ const BookingPage = () => {
 
   const handleNumberOfTravellersChange = (e) => {
     const newCount = parseInt(e.target.value, 10);
-
-    // Ensure minimum 1 traveller is always present
     if (newCount >= 0 && newCount <= 4) {
       const updatedTravellers = [...travellers];
       if (newCount > travellers.length) {
         for (let i = travellers.length; i < newCount; i++) {
           updatedTravellers.push({
-            id: i + 0,
+            id: i,
             name: "",
             gender: "",
             nic: "",
@@ -42,6 +41,20 @@ const BookingPage = () => {
       )
     );
   };
+
+  const handleConfirmBooking = () => {
+    setShowTicket(true);
+  };
+
+ 
+
+  const handlePrint = () => {
+    const printContents = document.getElementById("ticket-details").innerHTML;
+    const originalContents = document.body.innerHTML;
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+  }
 
   return (
     <div className="bg-gray-100 min-h-screen py-10">
@@ -67,7 +80,6 @@ const BookingPage = () => {
         <div className="p-6 bg-gray-50 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-4">Choose Your Seat</h2>
           <div className="flex justify-between">
-            {/* First Class */}
             <div
               className={`p-4 border rounded-lg cursor-pointer ${
                 selectedClass === "First"
@@ -81,7 +93,6 @@ const BookingPage = () => {
               <p>LKR 1000 Per Seat</p>
             </div>
 
-            {/* Second Class */}
             <div
               className={`p-4 border rounded-lg cursor-pointer ${
                 selectedClass === "Second"
@@ -95,7 +106,6 @@ const BookingPage = () => {
               <p>LKR 700 Per Seat</p>
             </div>
 
-            {/* Third Class */}
             <div
               className={`p-4 border rounded-lg cursor-pointer ${
                 selectedClass === "Third"
@@ -113,14 +123,15 @@ const BookingPage = () => {
           {selectedClass && (
             <div className="mt-4 p-4 text-center bg-blue-50 rounded-lg">
               <p className="text-blue-700 font-medium">
-                You have selected <span className="font-bold">{selectedClass} Class</span>.
+                You have selected{" "}
+                <span className="font-bold">{selectedClass} Class</span>.
               </p>
             </div>
           )}
         </div>
 
-          {/* Number of Seats */}
-          <div className="p-6 bg-white shadow-md rounded-lg">
+        {/* Number of Seats */}
+        <div className="p-6 bg-white shadow-md rounded-lg">
           <h2 className="text-xl font-semibold mb-4">Number of Seats</h2>
           <input
             type="number"
@@ -209,15 +220,108 @@ const BookingPage = () => {
             ))}
           </div>
 
-
           {/* Confirm Booking */}
           <div className="text-center mt-6">
-            <button className="bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600">
+            <button
+              className="bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600"
+              onClick={handleConfirmBooking}
+            >
               Confirm Booking
             </button>
           </div>
         </div>
       </div>
+
+  {/* Ticket Modal */}
+{showTicket && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
+      <div id="ticket-details" className="text-sm">
+        {/* Header */}
+        <div className="text-center border-b pb-4 mb-4">
+          <h2 className="text-lg font-bold">Train Ticket</h2>
+          <p>Booking Confirmation</p>
+        </div>
+
+        {/* Train Details */}
+        <div className="mb-4">
+          <h3 className="font-semibold">Train Details</h3>
+          <p>Train: Udarata Menike</p>
+          <p>Date: Nov 16</p>
+          <p>
+            From: Kandy (05:00 AM) &rarr; To: Colombo (11:00 AM)
+          </p>
+          <p>Duration: 8 hours</p>
+        </div>
+
+        {/* Class and Seats */}
+        <div className="mb-4">
+          <h3 className="font-semibold">Class & Seats</h3>
+          <p>Class: {selectedClass} Class</p>
+          <p>Number of Travellers: {numberOfTravellers}</p>
+        </div>
+
+        {/* Traveller Details */}
+        <div className="mb-4">
+          <h3 className="font-semibold">Traveller Details</h3>
+          {travellers.map((traveller, index) => (
+            <div key={index} className="border-b pb-2 mb-2">
+              <p>Traveller {index + 1}:</p>
+              <p>Name: {traveller.name}</p>
+              <p>Gender: {traveller.gender}</p>
+              <p>NIC: {traveller.nic}</p>
+              <p>Address: {traveller.address}</p>
+              <p>Mobile: {traveller.mobile}</p>
+              <p>Email: {traveller.email}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Total Price */}
+        <div className="mb-4">
+          <h3 className="font-semibold">Total Price</h3>
+          <p>
+            {numberOfTravellers} seats x{" "}
+            {selectedClass === "First"
+              ? "LKR 1000"
+              : selectedClass === "Second"
+              ? "LKR 700"
+              : "LKR 400"}{" "}
+            ={" "}
+            {numberOfTravellers *
+              (selectedClass === "First"
+                ? 1000
+                : selectedClass === "Second"
+                ? 700
+                : 400)}{" "}
+            LKR
+          </p>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center border-t pt-4">
+          <p className="text-xs">Thank you for booking with us!</p>
+        </div>
+      </div>
+
+      <div className="text-center mt-4">
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+          onClick={handlePrint}
+        >
+          Print Ticket
+        </button>
+        <button
+          className="ml-4 bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400"
+          onClick={() => setShowTicket(false)}
+        >
+          Close
+              
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
