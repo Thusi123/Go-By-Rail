@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logImage from "../assets/Logo.png";
+import backgroundImage from "../assets/09.png"; // Add your background image here
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const LoginPage = ({ onLoginSuccess }) => {
@@ -11,45 +12,48 @@ const LoginPage = ({ onLoginSuccess }) => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
- 
-
   const handleLogin = (event) => {
     event.preventDefault();
     if (email === "admin@gmail.com" && password === "admin") {
-      setShowSuccessMessage(true); // Show success message
-      setError(""); // Clear error
+      setShowSuccessMessage(true);
+      setError("");
       setTimeout(() => {
-        setShowSuccessMessage(false); // Hide success message after 2 seconds
+        setShowSuccessMessage(false);
         onLoginSuccess("admin");
         navigate("/admin");
       }, 300);
     } else if (email === "user@gmail.com" && password === "user") {
-      setShowSuccessMessage(true); // Show success message
-      setError(""); // Clear error
+      setShowSuccessMessage(true);
+      setError("");
       setTimeout(() => {
-        setShowSuccessMessage(false); // Hide success message after 2 seconds
+        setShowSuccessMessage(false);
         onLoginSuccess("user");
         navigate("/home");
       }, 800);
     } else {
       setError("Invalid email or password. Please try again.");
       setTimeout(() => {
-        setError(""); // Clear the error message after 1 second
+        setError("");
       }, 1000);
     }
   };
 
-
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-12">
+    <div
+      className="min-h-screen flex items-center justify-center p-12"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       {/* Success Message Box */}
       {showSuccessMessage && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-700 text-white px-6 py-3 rounded-md shadow-lg z-50 animate-fade-in-out">
-          <p className="font-semibold text-lg"> Login Successful! Redirecting...</p>
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-white text-green-700 px-6 py-3 rounded-md shadow-lg z-50 animate-fade-in-out">
+          <p className="font-semibold text-lg">Login Successful! Redirecting...</p>
         </div>
       )}
-
 
       {/* Error Message */}
       {error && (
@@ -58,7 +62,7 @@ const LoginPage = ({ onLoginSuccess }) => {
         </div>
       )}
 
-      <div className="bg-white shadow-lg rounded-lg overflow-hidden w-full max-w-4xl">
+      <div className="bg-white bg-opacity-70 shadow-lg rounded-lg overflow-hidden w-full max-w-4xl">
         <div className="flex flex-col md:flex-row">
           {/* Logo/Image Section */}
           <div
@@ -90,7 +94,6 @@ const LoginPage = ({ onLoginSuccess }) => {
                 />
               </div>
 
-
               <div className="mb-6">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
                   Password
@@ -109,14 +112,10 @@ const LoginPage = ({ onLoginSuccess }) => {
                     onClick={() => setIsVisible(!isVisible)}
                     className="absolute top-1/2 transform -translate-y-1/2 right-3 text-gray-500 focus:outline-none"
                   >
-                    {isVisible ? <FaEyeSlash /> : <FaEye /> }
+                    {isVisible ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
               </div>
-
-
-
-
 
               <button
                 type="submit"

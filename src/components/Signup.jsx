@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logoImage from "../assets/Logo.png";
+import backgroundImage from "../assets/09.png"; // Imported background image
 import { FaEye, FaEyeSlash } from "react-icons/fa"; 
-
-
-
 
 function SignupPage() {
   const navigate = useNavigate();
@@ -22,8 +20,16 @@ function SignupPage() {
   const isLongEnough = password.length >= 8;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 p-12">
-      <div className="grid grid-cols-1 md:grid-cols-2 bg-white shadow-lg rounded-lg overflow-hidden">
+    <div
+      className="flex min-h-screen items-center justify-center p-12"
+      style={{
+        backgroundImage: `url(${backgroundImage})`, // Set the imported background image
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 bg-white bg-opacity-70 shadow-lg rounded-lg overflow-hidden w-full max-w-4xl">
         {/* Left Side Image */}
         <div
           className="hidden md:flex w-full md:w-50 h-64 md:h-auto flex items-center justify-center"
@@ -74,54 +80,52 @@ function SignupPage() {
               />
             </div>
 
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  type={isVisible ? "text" : "password"}
+                  placeholder="Create your password"
+                  className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={() => setIsVisible(!isVisible)}
+                  className="absolute top-4 right-3 text-gray-500 focus:outline-none"
+                >
+                  {isVisible ? <FaEyeSlash /> : <FaEye /> }
+                </button>
+              </div>
+
+              {password && ( // Show validation only when password input is not empty
+                <div className="mt-4">
+                  <ul className="text-sm">
+                    <li className={`flex items-center ${hasLowercase ? "text-green-600" : "text-red-600"}`}>
+                      <span className="mr-2">{hasLowercase ? "✔" : "✘"}</span>
+                      Lowercase letter
+                    </li>
+                    <li className={`flex items-center ${hasUppercase ? "text-green-600" : "text-red-600"}`}>
+                      <span className="mr-2">{hasUppercase ? "✔" : "✘"}</span>
+                      Uppercase letter
+                    </li>
+                    <li className={`flex items-center ${hasNumber ? "text-green-600" : "text-red-600"}`}>
+                      <span className="mr-2">{hasNumber ? "✔" : "✘"}</span>
+                      Number
+                    </li>
+                    <li className={`flex items-center ${isLongEnough ? "text-green-600" : "text-red-600"}`}>
+                      <span className="mr-2">{isLongEnough ? "✔" : "✘"}</span>
+                      At least 8 characters
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
 
             <div>
-  <label className="block text-sm font-medium text-gray-700">
-    Password
-  </label>
-  <div className="relative">
-    <input
-      type={isVisible ? "text" : "password"}
-      placeholder="Create your password"
-      className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-    />
-    <button
-      type="button"
-      onClick={() => setIsVisible(!isVisible)}
-      className="absolute top-4 right-3 text-gray-500 focus:outline-none"
-    >
-      {isVisible ? <FaEyeSlash /> : <FaEye /> }
-    </button>
-  </div>
-
-  {password && ( // Show validation only when password input is not empty
-    <div className="mt-4">
-      <ul className="text-sm">
-        <li className={`flex items-center ${hasLowercase ? "text-green-600" : "text-red-600"}`}>
-          <span className="mr-2">{hasLowercase ? "✔" : "✘"}</span>
-          Lowercase letter
-        </li>
-        <li className={`flex items-center ${hasUppercase ? "text-green-600" : "text-red-600"}`}>
-          <span className="mr-2">{hasUppercase ? "✔" : "✘"}</span>
-          Uppercase letter
-        </li>
-        <li className={`flex items-center ${hasNumber ? "text-green-600" : "text-red-600"}`}>
-          <span className="mr-2">{hasNumber ? "✔" : "✘"}</span>
-          Number
-        </li>
-        <li className={`flex items-center ${isLongEnough ? "text-green-600" : "text-red-600"}`}>
-          <span className="mr-2">{isLongEnough ? "✔" : "✘"}</span>
-          At least 8 characters
-        </li>
-      </ul>
-    </div>
-  )}
-</div>
-
-
-             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Confirm Password
               </label>
@@ -142,9 +146,6 @@ function SignupPage() {
                 </button>
               </div>
             </div>
-
-
-
 
             <button
               type="submit"

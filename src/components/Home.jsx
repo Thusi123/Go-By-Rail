@@ -106,7 +106,7 @@ const Home = ({ translatedTexts }) => {
               in Sri Lanka smarter and more comfortable for everyone.
             </p>
           </div>
-        </section>
+        </section> 
       </main>
 
       {/* Footer */}
