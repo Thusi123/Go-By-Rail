@@ -18,7 +18,7 @@ const Tickets = () => {
       runsOn: "Everyday",
       from: { station: "Kandy", time: "1.00 PM" },
       to: { station: "Colombo", time: "3.40 PM" },
-      date: "2024-12-19",
+      date: "2025-01-07",
       duration: "5 hours",
     },
     {
@@ -26,7 +26,16 @@ const Tickets = () => {
       runsOn: "Everyday",
       from: { station: "Kandy", time: "06:15 AM" },
       to: { station: "Colombo", time: "08.51 AM" },
-      date: "2024-12-19",
+      date: "2025-01-08",
+      duration: "3 hours",
+    },
+
+    {
+      name: "1038",
+      runsOn: "Everyday",
+      from: { station: "Kandy", time: "06:15 AM" },
+      to: { station: "Colombo", time: "08.51 AM" },
+      date: "2025-01-10",
       duration: "3 hours",
     },
   ];
